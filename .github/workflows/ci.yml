@@ -161,6 +161,8 @@ jobs:
       - name: Export Database if Test Failed
         if: ${{ failure() }}
         run: |
+          sudo apt update
+          sudo apt install -y mysql-client
           mkdir -p ./tests/_dump
           mysqldump -u root --protocol=tcp --column-statistics=0 gibbon_test > ./tests/_dump/mysqldump.sql
 
