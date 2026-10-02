@@ -1,6 +1,7 @@
 # Never bake local credentials or environment config into the image
 config.php
 .env
+.actrc
 
 # Git history
 .git
