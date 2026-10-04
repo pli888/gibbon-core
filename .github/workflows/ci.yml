@@ -55,17 +55,6 @@ jobs:
           sudo tee -a /etc/locale.gen >/dev/null
           sudo locale-gen
 
-      - name: Run PHP server for tests to run
-        run: |
-          # Start a PHP test server for codeception to run against
-          [ -d ./tests/_logs ] || mkdir ./tests/_logs
-          php --server 127.0.0.1:8888 \
-            --docroot ${{ github.workspace }} \
-            --define display_startup_errors=1 \
-            --define display_errors=1 \
-            --define error_reporting=E_ALL \
-            >/dev/null 2>./tests/_logs/server_log &
-
       - name: Cache Composer dependencies
         uses: actions/cache@v4
         with:
@@ -77,8 +66,18 @@ jobs:
       - name: Install PHP vendor libraries
         run: composer install --prefer-dist --no-interaction
 
-      - name: Run composer test
-        run: composer test
+      - name: Run PHP server for tests to run
+        run: |
+          # Start a PHP test server for codeception to run against
+          [ -d ./tests/_logs ] || mkdir ./tests/_logs
+          php --server 127.0.0.1:8888 \
+            --docroot ${{ github.workspace }} \
+            --define display_startup_errors=1 \
+            --define display_errors=1 \
+            --define error_reporting=E_ALL \
+            >/dev/null 2>./tests/_logs/server_log &
+          # Run tests after server is started
+          composer test
         continue-on-error: ${{ matrix.experimental }}
         env:
           TEST_ENV: codeception
