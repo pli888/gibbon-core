@@ -94,6 +94,9 @@ jobs:
       - name: Check PHP warning and deprecated messages in server_log
         if: success() || failure()
         run: |
+          # Fix grep: ./tests/_logs/server_log: No such file or directory error
+          mkdir -p ./tests/_logs
+          touch ./tests/_logs/server_log
           # Check number of uncaught exceptions.
           export NUM_EXCEPTION=$(grep --perl-regexp 'Uncaught Exception: ' ./tests/_logs/server_log | wc -l)
           if [ "$NUM_EXCEPTION" -eq 0 ]; then
